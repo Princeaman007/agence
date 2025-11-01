@@ -69,6 +69,17 @@ const Profile = () => {
     }
   };
 
+  // ✅ NOUVEAU : Gérer le clic sur Message
+  const handleSendMessage = () => {
+    navigate('/dashboard/messages', {
+      state: {
+        selectedUserId: user._id,
+        userName: `${user.firstName} ${user.lastName}`,
+        userPhoto: user.profilePhoto
+      }
+    });
+  };
+
   const handleBlock = async () => {
     if (!window.confirm('Êtes-vous sûr de vouloir bloquer cet utilisateur ?')) {
       return;
@@ -218,7 +229,11 @@ const Profile = () => {
                     </Link>
                   ) : (
                     <>
-                      <button className="btn-primary flex items-center gap-2">
+                      {/* ✅ Bouton Message - MODIFIÉ */}
+                      <button 
+                        onClick={handleSendMessage}
+                        className="btn-primary flex items-center gap-2"
+                      >
                         <MessageCircle className="w-4 h-4" />
                         Message
                       </button>

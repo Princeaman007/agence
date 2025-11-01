@@ -93,12 +93,12 @@ const Dashboard = () => {
   };
 
   const handleMessage = (profileId) => {
-    if (!isPremium && messagesRemaining <= 0) {
-      toast.error('Limite de messages atteinte pour aujourd\'hui');
-      return;
-    }
+    // if (!isPremium && messagesRemaining <= 0) {
+    //   toast.error('Limite de messages atteinte pour aujourd\'hui');
+    //   return;
+    // }
     
-    toast.success('Redirection vers la conversation...');
+    // toast.success('Redirection vers la conversation...');
   };
 
   return (

@@ -1,9 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
 import connectDB from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import messageRoutes from './routes/messageRoutes.js';
+import { initializeSocket } from './socket/socketHandler.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -18,6 +21,15 @@ connectDB();
 
 const app = express();
 
+// Créer le serveur HTTP
+const server = createServer(app);
+
+// Initialiser Socket.io
+const io = initializeSocket(server);
+
+// Rendre io accessible dans les routes
+app.set('io', io);
+
 // Middlewares
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
@@ -28,19 +40,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Import des routes
-
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/messages', messageRoutes);
 
 // Route de test
 app.get('/', (req, res) => {
   res.json({
     success: true,
     message: 'API de la plateforme de rencontre',
-    version: '1.0.0'
+    version: '1.0.0',
+    features: ['Authentication', 'User Management', 'Real-time Messaging']
   });
 });
 
@@ -64,9 +75,10 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur le port ${PORT}`);
   console.log(`📍 Environnement: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`💬 Socket.io activé pour la messagerie en temps réel`);
 });
 
 // Gérer les rejets de promesses non capturés

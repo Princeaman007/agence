@@ -102,18 +102,8 @@ const Search = () => {
     }
   };
 
-  const handleMessage = async (profileId) => {
-    try {
-      if (!isPremium) {
-        toast.error('Fonctionnalité réservée aux membres Premium');
-        return;
-      }
-      // TODO: Implémenter la logique de message
-      toast.success('Redirection vers la conversation...');
-    } catch (error) {
-      toast.error('Erreur lors de l\'envoi du message');
-    }
-  };
+  // ✅ SUPPRIMÉ : handleMessage car ProfileCard gère maintenant la navigation lui-même
+  // Le ProfileCard n'a plus besoin du callback onMessage
 
   return (
     <DashboardLayout>
@@ -301,7 +291,8 @@ const Search = () => {
                   key={profile._id}
                   user={profile}
                   onLike={handleLike}
-                  onMessage={handleMessage}
+                  // ✅ ENLEVÉ : onMessage={handleMessage}
+                  // ProfileCard gère la navigation lui-même maintenant
                   canMessage={isPremium}
                   isPremiumUser={isPremium}
                 />

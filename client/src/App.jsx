@@ -13,6 +13,7 @@ import Pricing from './pages/Pricing';
 import Profile from './components/dashboard/Profile';
 import EditProfile from './pages/Editprofile';
 import Search from './pages/Search';
+import Messages from './pages/Messages';
 
 // Composant pour protéger les routes
 const PrivateRoute = ({ children }) => {
@@ -107,7 +108,7 @@ function App() {
             }
           />
           {/* Nouvelles routes Phase 2 */}
-          
+
           <Route
             path="/profile/:id"
             element={
@@ -129,6 +130,15 @@ function App() {
             element={
               <PrivateRoute>
                 <Search />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/messages"
+            element={
+              <PrivateRoute>
+                <Messages />
               </PrivateRoute>
             }
           />
