@@ -40,7 +40,6 @@ api.interceptors.response.use(
 
 // Services d'authentification
 export const authService = {
-  // Inscription
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
     if (response.data.data.token) {
@@ -50,7 +49,6 @@ export const authService = {
     return response.data;
   },
 
-  // Connexion
   login: async (credentials) => {
     const response = await api.post('/auth/login', credentials);
     if (response.data.data.token) {
@@ -60,38 +58,32 @@ export const authService = {
     return response.data;
   },
 
-  // Déconnexion
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = '/login';
   },
 
-  // Vérifier l'email
   verifyEmail: async (token) => {
     const response = await api.get(`/auth/verify-email/${token}`);
     return response.data;
   },
 
-  // Renvoyer l'email de vérification
   resendVerification: async () => {
     const response = await api.post('/auth/resend-verification');
     return response.data;
   },
 
-  // Mot de passe oublié
   forgotPassword: async (email) => {
     const response = await api.post('/auth/forgot-password', { email });
     return response.data;
   },
 
-  // Réinitialiser le mot de passe
   resetPassword: async (token, password) => {
     const response = await api.post(`/auth/reset-password/${token}`, { password });
     return response.data;
   },
 
-  // Obtenir l'utilisateur connecté
   getMe: async () => {
     const response = await api.get('/auth/me');
     return response.data;
@@ -100,7 +92,6 @@ export const authService = {
 
 // Services utilisateurs
 export const userService = {
-  // Obtenir un profil utilisateur
   getProfile: async (userId) => {
     try {
       const response = await api.get(`/users/${userId}`);
@@ -111,7 +102,6 @@ export const userService = {
     }
   },
 
-  // Mettre à jour le profil
   updateProfile: async (userData) => {
     try {
       const response = await api.put('/users/profile', userData);
@@ -122,7 +112,6 @@ export const userService = {
     }
   },
 
-  // Uploader une photo
   uploadPhoto: async (formData) => {
     try {
       const response = await api.post('/users/upload-photo', formData, {
@@ -137,7 +126,6 @@ export const userService = {
     }
   },
 
-  // Supprimer une photo
   deletePhoto: async (photoId) => {
     try {
       const response = await api.delete(`/users/photo/${photoId}`);
@@ -148,7 +136,6 @@ export const userService = {
     }
   },
 
-  // Définir une photo comme photo de profil
   setProfilePhoto: async (photoId) => {
     try {
       const response = await api.put(`/users/profile-photo/${photoId}`);
@@ -159,7 +146,6 @@ export const userService = {
     }
   },
 
-  // Bloquer un utilisateur
   blockUser: async (userId) => {
     try {
       const response = await api.post(`/users/block/${userId}`);
@@ -170,7 +156,6 @@ export const userService = {
     }
   },
 
-  // Débloquer un utilisateur
   unblockUser: async (userId) => {
     try {
       const response = await api.delete(`/users/block/${userId}`);
@@ -181,7 +166,6 @@ export const userService = {
     }
   },
 
-  // Rechercher des utilisateurs
   searchUsers: async (filters) => {
     try {
       const response = await api.get('/users/search', { params: filters });
@@ -195,7 +179,6 @@ export const userService = {
 
 // Services de messages
 export const messageService = {
-  // Obtenir les conversations
   getConversations: async () => {
     try {
       const response = await api.get('/messages/conversations');
@@ -206,7 +189,6 @@ export const messageService = {
     }
   },
 
-  // Obtenir les messages d'une conversation
   getMessages: async (conversationId) => {
     try {
       const response = await api.get(`/messages/${conversationId}`);
@@ -217,7 +199,6 @@ export const messageService = {
     }
   },
 
-  // Envoyer un message
   sendMessage: async (recipientId, content) => {
     try {
       const response = await api.post('/messages/send', { recipientId, content });
@@ -228,7 +209,6 @@ export const messageService = {
     }
   },
 
-  // Marquer comme lu
   markAsRead: async (conversationId) => {
     try {
       const response = await api.put(`/messages/${conversationId}/read`);
@@ -240,7 +220,7 @@ export const messageService = {
   }
 };
 
-// Services de compatibilité
+// Services de compatibilité - NOUVEAUX
 export const compatibilityService = {
   // Soumettre le test de compatibilité
   submitTest: async (testData) => {
@@ -273,12 +253,33 @@ export const compatibilityService = {
       console.error('Erreur calculateCompatibility:', error);
       throw error;
     }
+  },
+
+  // Obtenir les meilleurs matchs
+  getMatches: async (params = {}) => {
+    try {
+      const response = await api.get('/compatibility/matches', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erreur getMatches:', error);
+      throw error;
+    }
+  },
+
+  // Obtenir les détails de compatibilité (Premium/VIP)
+  getCompatibilityDetails: async (userId) => {
+    try {
+      const response = await api.get(`/compatibility/details/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur getCompatibilityDetails:', error);
+      throw error;
+    }
   }
 };
 
 // Services de rendez-vous (pour Premium/VIP)
 export const appointmentService = {
-  // Obtenir les rendez-vous
   getAppointments: async () => {
     try {
       const response = await api.get('/appointments');
@@ -289,7 +290,6 @@ export const appointmentService = {
     }
   },
 
-  // Créer un rendez-vous
   createAppointment: async (appointmentData) => {
     try {
       const response = await api.post('/appointments/create', appointmentData);
@@ -300,7 +300,6 @@ export const appointmentService = {
     }
   },
 
-  // Annuler un rendez-vous
   cancelAppointment: async (appointmentId, reason) => {
     try {
       const response = await api.put(`/appointments/${appointmentId}/cancel`, { reason });

@@ -161,7 +161,7 @@ const compatibilityTestSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Calculer le score de compatibilité entre deux utilisateurs
+// ✅ ALGORITHME CORRIGÉ - Calculer le score de compatibilité entre deux utilisateurs
 compatibilityTestSchema.statics.calculateCompatibility = function(test1, test2) {
   let score = 0;
   let maxScore = 0;
@@ -226,21 +226,16 @@ compatibilityTestSchema.statics.calculateCompatibility = function(test1, test2) 
     });
   }
   
-  // Vérifier les dealbreakers
-  let hasDealbreaker = false;
+  // ✅ CORRECTION : Vérifier les dealbreakers de manière INTELLIGENTE
   if (test1.dealbreakers && test2.dealbreakers) {
     const dealbreakerKeys = ['smoking', 'pets', 'differentReligion', 'longDistance', 'childrenFromPrevious'];
+    
     dealbreakerKeys.forEach(key => {
-      // Si l'un considère ça comme dealbreaker et l'autre a cette caractéristique
-      if (test1.dealbreakers[key] || test2.dealbreakers[key]) {
-        hasDealbreaker = true;
+      // Pénalité SEULEMENT si désaccord (l'un a coché, l'autre non)
+      if (test1.dealbreakers[key] !== test2.dealbreakers[key]) {
+        score -= 5; // Pénalité légère de 5 points au lieu de diviser par 3
       }
     });
-  }
-  
-  // Si dealbreaker, réduire fortement le score
-  if (hasDealbreaker) {
-    score *= 0.3;
   }
   
   // Normaliser le score sur 100
@@ -248,7 +243,7 @@ compatibilityTestSchema.statics.calculateCompatibility = function(test1, test2) 
   
   return {
     score: Math.max(0, Math.min(100, normalizedScore)),
-    hasDealbreaker
+    hasDealbreaker: false // ✅ Plus de dealbreakers bloquants
   };
 };
 

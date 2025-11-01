@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaHeart, FaHome, FaEnvelope, FaUser, FaSearch, FaChartBar, FaCrown, FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa';
+import { FaHeart, FaHome, FaEnvelope, FaUser, FaSearch, FaChartBar, FaCrown, FaBars, FaTimes, FaSignOutAlt, FaBrain, FaFire } from 'react-icons/fa';
 import { useAuthStore } from '../../store/useStore';
 import { authService } from '../../services/userService';
 
@@ -10,7 +10,7 @@ const DashboardLayout = ({ children }) => {
   const { user, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // ✅ AJOUT : Construire l'URL complète pour les images
+  // ✅ Construire l'URL complète pour les images
   const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5000';
   const profilePhotoUrl = user?.profilePhoto 
     ? `${BASE_URL}${user.profilePhoto}` 
@@ -22,17 +22,64 @@ const DashboardLayout = ({ children }) => {
     navigate('/login');
   };
 
-  // Menu items basé sur le type de compte
+  // ✅ NOUVEAU : Menu items avec Phase 4 (Compatibilité)
   const menuItems = [
-    { name: 'Accueil', path: '/dashboard', icon: FaHome, forAll: true },
-    { name: 'Messages', path: '/dashboard/messages', icon: FaEnvelope, forAll: true },
-    { name: 'Recherche', path: '/search', icon: FaSearch, premium: true },
-    { name: 'Mes Matchs', path: '/dashboard/matches', icon: FaHeart, premium: true },
-    { name: 'Mon Profil', path: `/profile/${user?._id}`, icon: FaUser, forAll: true },
-    { name: 'Statistiques', path: '/dashboard/stats', icon: FaChartBar, premium: true },
+    { 
+      name: 'Accueil', 
+      path: '/dashboard', 
+      icon: FaHome, 
+      forAll: true 
+    },
+    { 
+      name: 'Test de Compatibilité', 
+      path: '/compatibility-test', 
+      icon: FaBrain, 
+      forAll: true,
+      badge: 'Nouveau',
+      description: 'Découvre tes meilleurs matchs'
+    },
+    { 
+      name: 'Mes Matchs', 
+      path: '/matches', 
+      icon: FaFire, 
+      forAll: true,
+      badge: 'Phase 4',
+      description: 'Profils compatibles avec toi'
+    },
+    { 
+      name: 'Messages', 
+      path: '/dashboard/messages', 
+      icon: FaEnvelope, 
+      forAll: true 
+    },
+    { 
+      name: 'Recherche', 
+      path: '/search', 
+      icon: FaSearch, 
+      premium: true 
+    },
+    { 
+      name: 'Mon Profil', 
+      path: `/profile/${user?._id}`, 
+      icon: FaUser, 
+      forAll: true 
+    },
+    { 
+      name: 'Statistiques', 
+      path: '/dashboard/stats', 
+      icon: FaChartBar, 
+      premium: true 
+    },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    // Pour les matchs, considérer aussi /compatibility-results comme actif
+    if (path === '/matches' && (location.pathname === '/compatibility-results' || location.pathname === '/matches')) {
+      return true;
+    }
+    return location.pathname === path;
+  };
+
   const canAccess = (item) => {
     if (item.forAll) return true;
     if (item.premium && (user?.accountType === 'premium' || user?.accountType === 'vip')) return true;
@@ -93,7 +140,6 @@ const DashboardLayout = ({ children }) => {
                     alt={user.firstName}
                     className="w-10 h-10 rounded-full object-cover border-2 border-primary-500"
                     onError={(e) => {
-                      // ✅ Fallback en cas d'erreur
                       e.target.style.display = 'none';
                       e.target.nextSibling.style.display = 'flex';
                     }}
@@ -161,7 +207,7 @@ const DashboardLayout = ({ children }) => {
                     <Link
                       to={item.path}
                       className={`
-                        flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200
+                        flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 relative
                         ${isActive(item.path)
                           ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md'
                           : 'text-gray-700 hover:bg-gray-100'
@@ -170,7 +216,20 @@ const DashboardLayout = ({ children }) => {
                       onClick={() => setSidebarOpen(false)}
                     >
                       <Icon size={20} />
-                      <span className="font-medium">{item.name}</span>
+                      <span className="font-medium flex-1">{item.name}</span>
+                      
+                      {/* ✅ NOUVEAU : Badge pour les nouvelles fonctionnalités */}
+                      {item.badge && !isActive(item.path) && (
+                        <span className={`
+                          text-xs px-2 py-0.5 rounded-full font-semibold
+                          ${item.badge === 'Nouveau' 
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-blue-100 text-blue-700'
+                          }
+                        `}>
+                          {item.badge}
+                        </span>
+                      )}
                     </Link>
                   ) : (
                     <div className="relative group">
@@ -182,7 +241,7 @@ const DashboardLayout = ({ children }) => {
                         <FaCrown className="ml-auto text-yellow-500" size={16} />
                       </div>
                       {/* Tooltip */}
-                      <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white text-xs rounded py-2 px-3 whitespace-nowrap invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200">
+                      <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white text-xs rounded py-2 px-3 whitespace-nowrap invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 z-50">
                         Réservé aux comptes Premium
                         <div className="absolute right-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
                       </div>
@@ -191,6 +250,26 @@ const DashboardLayout = ({ children }) => {
                 </div>
               );
             })}
+
+            {/* ✅ NOUVEAU : Section Phase 4 mise en avant */}
+            <div className="pt-4 mt-4 border-t border-gray-200">
+              <div className="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-lg p-4 border border-primary-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <FaBrain className="text-primary-600 text-xl" />
+                  <h3 className="font-bold text-gray-900 text-sm">Nouveau !</h3>
+                </div>
+                <p className="text-xs text-gray-600 mb-3">
+                  Découvre qui est vraiment compatible avec toi grâce à notre test scientifique
+                </p>
+                <Link
+                  to="/compatibility-test"
+                  className="block bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-2 rounded-lg text-sm font-semibold text-center hover:shadow-lg transition-all duration-200"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  🧠 Faire le test
+                </Link>
+              </div>
+            </div>
 
             {/* Bouton Upgrade si gratuit */}
             {user?.accountType === 'gratuit' && (
@@ -202,6 +281,9 @@ const DashboardLayout = ({ children }) => {
                   <FaCrown className="inline mr-2" />
                   Passer à Premium
                 </Link>
+                <p className="text-xs text-gray-500 text-center mt-2">
+                  Jusqu'à 50 matchs compatibles
+                </p>
               </div>
             )}
           </nav>
@@ -210,7 +292,7 @@ const DashboardLayout = ({ children }) => {
         {/* Overlay pour mobile */}
         {sidebarOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden mt-16"
             onClick={() => setSidebarOpen(false)}
           ></div>
         )}

@@ -14,6 +14,9 @@ import Profile from './components/dashboard/Profile';
 import EditProfile from './pages/Editprofile';
 import Search from './pages/Search';
 import Messages from './pages/Messages';
+import CompatibilityTest from './pages/CompatibilityTest';
+import CompatibilityResults from './pages/CompatibilityResults';
+import Matches from './pages/Matches';
 
 // Composant pour protéger les routes
 const PrivateRoute = ({ children }) => {
@@ -107,8 +110,8 @@ function App() {
               </PrivateRoute>
             }
           />
-          {/* Nouvelles routes Phase 2 */}
 
+          {/* Routes Phase 2 */}
           <Route
             path="/profile/:id"
             element={
@@ -133,7 +136,6 @@ function App() {
               </PrivateRoute>
             }
           />
-
           <Route
             path="/dashboard/messages"
             element={
@@ -143,8 +145,31 @@ function App() {
             }
           />
 
-          {/* Route par défaut */}
-          <Route path="/" element={<Navigate to="/login" />} />
+          {/* Routes Phase 4 - Compatibilité */}
+          <Route
+            path="/compatibility-test"
+            element={
+              <PrivateRoute>
+                <CompatibilityTest />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/compatibility-results"
+            element={
+              <PrivateRoute>
+                <CompatibilityResults />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/matches"
+            element={
+              <PrivateRoute>
+                <Matches />
+              </PrivateRoute>
+            }
+          />
 
           {/* Page 404 */}
           <Route

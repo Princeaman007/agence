@@ -9,6 +9,7 @@ import messageRoutes from './routes/messageRoutes.js';
 import { initializeSocket } from './socket/socketHandler.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import compatibilityRoutes from './routes/compatibility.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/compatibility', compatibilityRoutes);
 
 // Route de test
 app.get('/', (req, res) => {
