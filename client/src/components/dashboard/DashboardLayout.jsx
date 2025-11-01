@@ -26,7 +26,7 @@ const DashboardLayout = ({ children }) => {
   const menuItems = [
     { name: 'Accueil', path: '/dashboard', icon: FaHome, forAll: true },
     { name: 'Messages', path: '/dashboard/messages', icon: FaEnvelope, forAll: true },
-    { name: 'Recherche', path: '/dashboard/search', icon: FaSearch, premium: true },
+    { name: 'Recherche', path: '/search', icon: FaSearch, premium: true },
     { name: 'Mes Matchs', path: '/dashboard/matches', icon: FaHeart, premium: true },
     { name: 'Mon Profil', path: `/profile/${user?._id}`, icon: FaUser, forAll: true },
     { name: 'Statistiques', path: '/dashboard/stats', icon: FaChartBar, premium: true },
